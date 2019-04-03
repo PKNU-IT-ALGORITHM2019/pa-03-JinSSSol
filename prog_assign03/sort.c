@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #define SWAP(a,b){int tmp=a;a=b;b=tmp;}
-#define MAX 1000000
+#define MAX 1000001
 #define BUFFER_LENGTH 100
 
 void get_input_random(char filename[], int N); //테스트 파일명,크기 입력받아서 테스트 데이터파일 생성
@@ -16,20 +16,24 @@ void quick_sort(int data[], int p, int r);
 int partition(int data[], int p, int r);
 int partition_middle(int data[], int p, int r);
 int partition_random(int data[], int p, int r);
+void max_heapify(int data[], int i, int n);
+void build_max_heap(int data[], int n);
+void heap_sort(int data[], int n);
+int compare(void *first, void *second);
 void printTable(); //파일로부터 데이터 받아 테이블 형식으로 출력
 
 int main() {
-	int N = 1000000;
+	int N = 10000;
 	int*data = (int)malloc(MAX * sizeof(int));
 	clock_t start, end;
 
-	FILE *in_fp = fopen("input(1000000).txt", "r");
+	FILE *in_fp = fopen("input(10000).txt", "r");
 	FILE *out_fp = fopen("output.txt", "w");
 	for (int i = 0; i < N; i++)
 		fscanf(in_fp, "%d", &data[i]);
 
 	start = clock(); //시작 시간
-	quick_sort(data,0,N-1);
+	qsort(data, N, sizeof(int), compare);
 	end = clock();  //끝난 시간
 
 	for (int i = 0; i < N; i++) {
@@ -189,6 +193,7 @@ int partition_middle(int data[], int p, int r) //pivot(중간값)기준 작,큰 으로 나
 
 int partition_random(int data[], int p, int r) //pivot(랜덤 값)기준 작,큰 으로 나누고 pivot 인덱스 반환
 {
+	//srand((unsigned int)time(NULL));
 	int pivotIndex = (rand() % (r - p + 1) + p); //pivot은 data[p~r] 사이의 랜덤 값
 	int pivot = data[pivotIndex];
 	int i = p - 1;
@@ -204,6 +209,78 @@ int partition_random(int data[], int p, int r) //pivot(랜덤 값)기준 작,큰 으로 �
 	return i + 1;
 }
 
+void max_heapify(int data[], int i, int n)
+{
+	if (i * 2 > n) return;
+	int k = 2 * i;
+	if (k + 1 <= n && data[k] < data[k + 1]) k++;
+	if (data[i] >= data[k]) return;
+	SWAP(data[i], data[k]);
+	max_heapify(data, k, n);
+
+}
+
+void build_max_heap(int data[], int n)
+{
+	for (int i = n / 2; i >= 1; i--) {
+		max_heapify(data, i, n);
+	}
+}
+
+void heap_sort(int data[], int n) {
+	build_max_heap(data, n);
+	for (int i = n; i > 1; i--) {
+		SWAP(data[1], data[i]);
+		n--;
+		max_heapify(data, 1, n);
+	}
+}
+
+int compare(void *first, void *second)
+{
+	if (*(int*)first > *(int*)second)
+		return 1;
+	else if (*(int*)first < *(int*)second)
+		return -1;
+	else
+		return 0;
+}
+
+void printTable1() {
+	double bubble[] = { 0.0063,0.006,0.651,0.585,3,3 };
+	double selection[] = { 0.0054,0.005,0.5784,0.610,3,3 };
+	double insertion[] = { 0.0016,0.005,0.2158,0.362,3,3 };
+	double merge[] = { 0.0003,0.001,0.0035,0.002,0.469,0.312, };
+	double quick1[] = { 0.000,0.005,0.003,3,0.453,3 };
+	double quick2[] = { 0.0002,0.001,0.0042,0.003,0.646,0.923 };
+	double quick3[] = { 0.0002,0.001,0.003,0.002,0.475,0.357 };
+
+	FILE*fp = fopen("clock.txt", "w");
+	fprintf(fp, "%15s %15s %15s %15s %15s %15s %15s\n", " ", "Random1000", "Reverse1000", "Random10000", "Reverse100000", "Random1000000", "Reverse1000000");
+	fprintf(fp, "%15s ", "Bubble");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", bubble[i]);
+	fprintf(fp, "\n");
+	fprintf(fp, "%15s ", "Selection");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", selection[i]);
+	fprintf(fp, "\n");
+	fprintf(fp, "%15s ", "insertion");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", insertion[i]);
+	fprintf(fp, "\n");
+	fprintf(fp, "%15s ", "Merge");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", merge[i]);
+	fprintf(fp, "\n");
+	fprintf(fp, "%15s ", "Quick1");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", quick1[i]);
+	fprintf(fp, "\n");
+	fprintf(fp, "%15s ", "Quick2");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", quick2[i]);
+	fprintf(fp, "\n");
+	fprintf(fp, "%15s ", "Quick3");
+	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", quick3[i]);
+	fprintf(fp, "\n");
+	fclose(fp);
+}
+
 void printTable() {
 	typedef struct sort {
 		char name[10];       //정렬 이름
@@ -211,16 +288,16 @@ void printTable() {
 
 	}Sort;
 	Sort sort[10];
-	FILE *in_fp = fopen("timedata.txt", "r");
-	for (int i = 0; i < 7; i++) {
+	FILE *in_fp = fopen("clockdata.txt", "r");
+	for (int i = 0; i < 9; i++) {
 		fscanf(in_fp, "%s", sort[i].name);
 		for (int j = 0; j < 6; j++) {
 			fscanf(in_fp, "%lf", &sort[i].time[j]);
 		}
 	}
-	FILE*fp = fopen("time.txt", "w");
+	FILE*fp = fopen("clock.txt", "w");
 	fprintf(fp, "%15s %15s %15s %15s %15s %15s %15s\n", " ", "Random1000", "Reverse1000", "Random10000", "Reverse100000", "Random1000000", "Reverse1000000");
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 9; i++) {
 		fprintf(fp, "%-15s ", sort[i].name);
 		for (int j = 0; j < 6; j++) fprintf(fp, "%15.4f ", sort[i].time[j]);
 		fprintf(fp, "\n");
