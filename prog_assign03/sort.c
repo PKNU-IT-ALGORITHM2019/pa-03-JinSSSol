@@ -246,41 +246,6 @@ int compare(void *first, void *second)
 		return 0;
 }
 
-void printTable1() {
-	double bubble[] = { 0.0063,0.006,0.651,0.585,3,3 };
-	double selection[] = { 0.0054,0.005,0.5784,0.610,3,3 };
-	double insertion[] = { 0.0016,0.005,0.2158,0.362,3,3 };
-	double merge[] = { 0.0003,0.001,0.0035,0.002,0.469,0.312, };
-	double quick1[] = { 0.000,0.005,0.003,3,0.453,3 };
-	double quick2[] = { 0.0002,0.001,0.0042,0.003,0.646,0.923 };
-	double quick3[] = { 0.0002,0.001,0.003,0.002,0.475,0.357 };
-
-	FILE*fp = fopen("clock.txt", "w");
-	fprintf(fp, "%15s %15s %15s %15s %15s %15s %15s\n", " ", "Random1000", "Reverse1000", "Random10000", "Reverse100000", "Random1000000", "Reverse1000000");
-	fprintf(fp, "%15s ", "Bubble");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", bubble[i]);
-	fprintf(fp, "\n");
-	fprintf(fp, "%15s ", "Selection");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", selection[i]);
-	fprintf(fp, "\n");
-	fprintf(fp, "%15s ", "insertion");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", insertion[i]);
-	fprintf(fp, "\n");
-	fprintf(fp, "%15s ", "Merge");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", merge[i]);
-	fprintf(fp, "\n");
-	fprintf(fp, "%15s ", "Quick1");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", quick1[i]);
-	fprintf(fp, "\n");
-	fprintf(fp, "%15s ", "Quick2");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", quick2[i]);
-	fprintf(fp, "\n");
-	fprintf(fp, "%15s ", "Quick3");
-	for (int i = 0; i < 6; i++) fprintf(fp, "%15.3f ", quick3[i]);
-	fprintf(fp, "\n");
-	fclose(fp);
-}
-
 void printTable() {
 	typedef struct sort {
 		char name[10];       //정렬 이름
@@ -305,3 +270,14 @@ void printTable() {
 	fclose(in_fp);
 	fclose(fp);
 }
+
+//clockdata.txt 
+//Bubble 0.0063 0.006 0.651 0.585 100 100
+//Selection 0.0054 0.005 0.5784 0.610 100 100
+//Insertion 0.0016 0.005 0.2158 0.362 100 100
+//Merge 0.0003 0.001 0.0035 0.002 0.469 0.312
+//Quick1 0.000 0.005 0.003 - 1 0.453 - 1
+//Quick2 0.0002 0.001 0.0042 0.003 0.646 0.923
+//Quick3 0.0002 0.001 0.003 0.002 0.475 0.357
+//Heap 0.0005 0 0.008 0.006 1.315 1.067
+//Library 0.0001 0 0.003 0.001 0.3493 0.268
